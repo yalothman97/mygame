@@ -1,26 +1,47 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import "./App.css";
+import "react-piano/dist/styles.css";
+import "./customPianoStyles.css";
+import { Piano, KeyboardShortcuts, MidiNumbers } from "react-piano";
+import "react-piano/dist/styles.css";
+import DimensionsProvider from "./DimensionsProvider";
+import SoundfontProvider from "./SoundfontProvider";
 
-function App() {
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+const soundfontHostname = "https://d1pzp51pvbm36p.cloudfront.net";
+
+const noteRange = {
+  first: MidiNumbers.fromNote("c3"),
+  last: MidiNumbers.fromNote("f4")
+};
+const keyboardShortcuts = KeyboardShortcuts.create({
+  firstNote: noteRange.first,
+  lastNote: noteRange.last,
+  keyboardConfig: KeyboardShortcuts.HOME_ROW
+});
+
+function ResponsivePiano(props) {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <DimensionsProvider>
+      {({ containerWidth, containerHeight }) => (
+        <SoundfontProvider
+          instrumentName="acoustic_grand_piano"
+          audioContext={audioContext}
+          hostname={soundfontHostname}
+          render={({ isLoading, playNote, stopNote }) => (
+            <Piano
+              noteRange={noteRange}
+              width={containerWidth}
+              playNote={playNote}
+              stopNote={stopNote}
+              disabled={isLoading}
+              keyboardShortcuts={keyboardShortcuts}
+            />
+          )}
+        />
+      )}
+    </DimensionsProvider>
   );
 }
 
-export default App;
+export default ResponsivePiano;
