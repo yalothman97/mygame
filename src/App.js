@@ -1,47 +1,19 @@
-import React from "react";
-import "./App.css";
-import "react-piano/dist/styles.css";
-import "./customPianoStyles.css";
-import { Piano, KeyboardShortcuts, MidiNumbers } from "react-piano";
-import "react-piano/dist/styles.css";
-import DimensionsProvider from "./DimensionsProvider";
-import SoundfontProvider from "./SoundfontProvider";
+import React, { Component } from "react";
+import Welcome from "./Welcome";
+import Game from "./Game";
 
-const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-const soundfontHostname = "https://d1pzp51pvbm36p.cloudfront.net";
+class App extends Component {
+  state = {
+    status: "welcome"
+  };
 
-const noteRange = {
-  first: MidiNumbers.fromNote("c3"),
-  last: MidiNumbers.fromNote("f4")
-};
-const keyboardShortcuts = KeyboardShortcuts.create({
-  firstNote: noteRange.first,
-  lastNote: noteRange.last,
-  keyboardConfig: KeyboardShortcuts.HOME_ROW
-});
-
-function ResponsivePiano(props) {
-  return (
-    <DimensionsProvider>
-      {({ containerWidth, containerHeight }) => (
-        <SoundfontProvider
-          instrumentName="acoustic_grand_piano"
-          audioContext={audioContext}
-          hostname={soundfontHostname}
-          render={({ isLoading, playNote, stopNote }) => (
-            <Piano
-              noteRange={noteRange}
-              width={containerWidth}
-              playNote={playNote}
-              stopNote={stopNote}
-              disabled={isLoading}
-              keyboardShortcuts={keyboardShortcuts}
-            />
-          )}
-        />
-      )}
-    </DimensionsProvider>
-  );
+  handleScreen = screen => this.setState({ status: screen });
+  render() {
+    if (this.state.status === "welcome") {
+      return <Welcome handleScreen={this.handleScreen} />;
+    }
+    return <Game />;
+  }
 }
 
-export default ResponsivePiano;
+export default App;
